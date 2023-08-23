@@ -63,6 +63,19 @@
         this.validate();
         if(this.valid){
           this.submitted = true;
+          try {
+            const response =  fetch(`/api/login?username=${this.email}&password=${this.password}`);
+            if (response.ok) {
+              this.user =  response.json();
+              this.loginError = '';
+            } else {
+              this.user = null;
+              this.loginError = 'Invalid username or password';
+            }
+          } catch (error) {
+            console.error('Error fetching data:', error);
+            this.loginError = 'An error occurred during login';
+          }
         }
       }
     }
