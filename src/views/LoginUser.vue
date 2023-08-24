@@ -11,11 +11,12 @@
                     <div class="forms-inputs mb-4"> <span>Password</span> <input autocomplete="off" type="password" v-model="password" v-bind:class="{'form-control':true, 'is-invalid' : !validPassword(password) && passwordBlured}" v-on:blur="passwordBlured = true">
                         <div class="invalid-feedback">Password must be 8 character!</div>
                     </div>
+                    <div class="forms-inputs mb-4">                        
+                        <router-link to="/register">Registrate</router-link>
+                    </div>
                     <div class="mb-3"> <button v-on:click.stop.prevent="submit" class="btn btn-dark w-100">Login</button> </div>
                 </div>
-                <div class="success-data" v-else>
-                    <div class="text-center d-flex flex-column"> <i class='bx bxs-badge-check'></i> <span class="text-center fs-1">You have been logged in <br> Successfully</span> </div>
-                </div>
+                
             </div>
         </div>
     </div>
@@ -59,23 +60,27 @@
         }
       },
 
-      submit : function(){
+      submit : async function(){
         this.validate();
         if(this.valid){
           this.submitted = true;
           try {
-            const response =  fetch(`/api/login?username=${this.email}&password=${this.password}`);
+            const url = `http://localhost:9090/api/users/login?username=${this.email}&password=${this.password}`;
+            const response =  await fetch(url);
+            console.log(response);
             if (response.ok) {
-              this.user =  response.json();
-              this.loginError = '';
+              this.user = await response.json();
+              this.$router.push('/');
             } else {
               this.user = null;
+              this.$router.push('/login');
               this.loginError = 'Invalid username or password';
             }
           } catch (error) {
             console.error('Error fetching data:', error);
             this.loginError = 'An error occurred during login';
           }
+          
         }
       }
     }
